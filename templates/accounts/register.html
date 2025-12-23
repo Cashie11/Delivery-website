@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <div style="max-width: 500px; margin: 0 auto;">
+            <h1 class="text-center mb-2">Create Account</h1>
+            <p class="text-center" style="color: var(--gray-400); margin-bottom: 2rem;">
+                Join SwiftTrack to manage your deliveries
+            </p>
+
+            <div class="glass-card">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="id_username">Username *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <small style="color: var(--danger);">{{ form.username.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <small style="color: var(--danger);">{{ form.email.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_phone">Phone Number *</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <small style="color: var(--danger);">{{ form.phone.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_address">Address *</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <small style="color: var(--danger);">{{ form.address.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_password1">Password *</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                        <small style="color: var(--danger);">{{ form.password1.errors.0 }}</small>
+                        {% endif %}
+                        <small style="color: var(--gray-500); font-size: 0.875rem;">
+                            Password must be at least 8 characters
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_password2">Confirm Password *</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                        <small style="color: var(--danger);">{{ form.password2.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        Create Account 🚀
+                    </button>
+                </form>
+
+                <div
+                    style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(99, 102, 241, 0.2);">
+                    <p style="color: var(--gray-400);">
+                        Already have an account?
+                        <a href="{% url 'login' %}" style="color: var(--primary-light); text-decoration: none;">
+                            Login here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

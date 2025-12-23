@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Update Tracking - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-2">Update Package Tracking</h1>
+        <p class="text-center" style="color: var(--gray-400); margin-bottom: 3rem;">
+            Update the current status and location for {{ package.tracking_number }}
+        </p>
+
+        <div style="max-width: 600px; margin: 0 auto;">
+            <form method="post" class="glass-card">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_status">Current Status</label>
+                    {{ form.status }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_current_location">Current Location</label>
+                    {{ form.current_location }}
+                    <small style="color: var(--gray-500); display: block; margin-top: 0.25rem;">
+                        Enter the city, facility, or hub where the package is currently.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_notes">Tracking Notes (Optional)</label>
+                    {{ form.notes }}
+                </div>
+
+                <div class="grid grid-2" style="margin-top: 2rem; gap: 1rem;">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary"
+                        style="text-align: center; text-decoration: none;">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Update Tracking 🚀
+                    </button>
+                </div>
+            </form>
+
+            <div class="glass-card mt-3">
+                <h3 style="color: var(--primary-light); margin-bottom: 1rem;">📦 Package Info</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray-400);">To:</span>
+                        <span style="color: var(--white);">{{ package.receiver.name }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray-400);">Description:</span>
+                        <span style="color: var(--white);">{{ package.description|truncatewords:5 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

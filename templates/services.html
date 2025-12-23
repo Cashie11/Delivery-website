@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Services & Pricing - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-2">Our Services</h1>
+        <p class="text-center" style="color: var(--gray-400); margin-bottom: 3rem;">
+            Choose the delivery option that best fits your needs
+        </p>
+
+        <!-- Pricing Cards -->
+        <div class="grid grid-3 mb-3">
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+                    <h3>Standard</h3>
+                    <p style="font-size: 2rem; font-weight: 700; color: var(--primary-light); margin: 1rem 0;">$9.99</p>
+                    <p style="color: var(--gray-400);">per package</p>
+                </div>
+                <ul style="list-style: none; color: var(--gray-400);">
+                    <li style="margin-bottom: 0.75rem;">✓ 3-5 business days</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Up to 10kg</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Basic tracking</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Email notifications</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Standard insurance</li>
+                </ul>
+                <a href="{% url 'request_pickup' %}" class="btn btn-secondary" style="width: 100%; margin-top: 1.5rem;">
+                    Choose Standard
+                </a>
+            </div>
+
+            <div class="card" style="border: 2px solid var(--primary-light); transform: scale(1.05);">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <span
+                        style="background: var(--gradient-primary); color: white; padding: 0.25rem 1rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">POPULAR</span>
+                    <div style="font-size: 3rem; margin: 1rem 0;">⚡</div>
+                    <h3>Express</h3>
+                    <p style="font-size: 2rem; font-weight: 700; color: var(--accent); margin: 1rem 0;">$19.99</p>
+                    <p style="color: var(--gray-400);">per package</p>
+                </div>
+                <ul style="list-style: none; color: var(--gray-400);">
+                    <li style="margin-bottom: 0.75rem;">✓ 1-2 business days</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Up to 25kg</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Real-time tracking</li>
+                    <li style="margin-bottom: 0.75rem;">✓ SMS & email alerts</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Premium insurance</li>
+                </ul>
+                <a href="{% url 'request_pickup' %}" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                    Choose Express
+                </a>
+            </div>
+
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                    <h3>Same-Day</h3>
+                    <p style="font-size: 2rem; font-weight: 700; color: var(--success); margin: 1rem 0;">$39.99</p>
+                    <p style="color: var(--gray-400);">per package</p>
+                </div>
+                <ul style="list-style: none; color: var(--gray-400);">
+                    <li style="margin-bottom: 0.75rem;">✓ Same-day delivery</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Up to 15kg</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Live GPS tracking</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Priority support</li>
+                    <li style="margin-bottom: 0.75rem;">✓ Full insurance</li>
+                </ul>
+                <a href="{% url 'request_pickup' %}" class="btn btn-secondary" style="width: 100%; margin-top: 1.5rem;">
+                    Choose Same-Day
+                </a>
+            </div>
+        </div>
+
+        <!-- Additional Services -->
+        <h2 class="text-center mb-3" style="margin-top: 4rem;">Additional Features</h2>
+        <div class="grid grid-2">
+            <div class="glass-card">
+                <h3>🌍 Wide Coverage</h3>
+                <p style="color: var(--gray-400);">We deliver to over 10,000 locations nationwide with expanding
+                    international service to major cities worldwide.</p>
+            </div>
+            <div class="glass-card">
+                <h3>🔒 Secure Handling</h3>
+                <p style="color: var(--gray-400);">All packages are handled with care and tracked at every step. We use
+                    advanced security measures to protect your items.</p>
+            </div>
+            <div class="glass-card">
+                <h3>📱 Mobile App</h3>
+                <p style="color: var(--gray-400);">Track your packages on the go with our mobile app. Available for iOS
+                    and Android devices.</p>
+            </div>
+            <div class="glass-card">
+                <h3>💼 Business Solutions</h3>
+                <p style="color: var(--gray-400);">Special rates and dedicated support for businesses. Contact us for
+                    custom enterprise solutions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

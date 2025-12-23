@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <!-- Welcome Header -->
+        <div class="glass-card mb-3">
+            <h1 style="margin-bottom: 0.5rem;">Welcome, {{ user.username }}! 👋</h1>
+            <p style="color: var(--gray-400);">Manage your packages and track deliveries</p>
+        </div>
+
+        <style>
+            .stat-card {
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                border-color: var(--primary-light);
+                box-shadow: var(--shadow-xl), var(--shadow-glow);
+            }
+
+            .stat-card.active {
+                border-color: var(--primary-light);
+                background: rgba(99, 102, 241, 0.1);
+            }
+
+            .package-item {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .package-item.hidden {
+                display: none;
+            }
+
+            .package-details {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out, padding 0.3s ease;
+                padding-top: 0 !important;
+                border-top: none !important;
+            }
+
+            .package-item.expanded .package-details {
+                max-height: 800px;
+                padding-top: var(--spacing-sm) !important;
+                border-top: 1px solid rgba(99, 102, 241, 0.1) !important;
+            }
+
+            .package-header {
+                cursor: pointer;
+            }
+
+            .expand-icon {
+                transition: transform 0.3s ease;
+                display: inline-block;
+                margin-left: 0.5rem;
+            }
+
+            .package-item.expanded .expand-icon {
+                transform: rotate(180deg);
+            }
+        </style>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-3 mb-3">
+            <div class="card text-center stat-card" id="sent-stat" onclick="filterPackages('all', 'sent')">
+                <h2 style="color: var(--primary-light); margin-bottom: 0.5rem;">{{ total_sent }}</h2>
+                <p style="color: var(--gray-400);">Packages Sent</p>
+            </div>
+            <div class="card text-center stat-card" id="pending-stat" onclick="filterPackages('pending', 'sent')">
+                <h2 style="color: var(--accent); margin-bottom: 0.5rem;">{{ pending_sent }}</h2>
+                <p style="color: var(--gray-400);">Pending Sent</p>
+            </div>
+            <div class="card text-center stat-card" id="received-stat" onclick="filterPackages('all', 'received')">
+                <h2 style="color: var(--success); margin-bottom: 0.5rem;">{{ total_received }}</h2>
+                <p style="color: var(--gray-400);">Received</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-3 mb-3">
+            <a href="{% url 'create_package' %}" class="btn btn-primary" style="text-align: center; padding: 1.5rem;">
+                📦 Create Package
+            </a>
+            <a href="{% url 'claim_package' %}" class="btn btn-accent"
+                style="text-align: center; padding: 1.5rem; background: var(--accent); color: white; text-decoration: none; border-radius: var(--radius-lg); font-weight: 600;">
+                🎁 Claim Package
+            </a>
+            <a href="{% url 'track_package' %}" class="btn btn-secondary" style="text-align: center; padding: 1.5rem;">
+                🔍 Track Package
+            </a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="glass-card">
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="showTab('sent')">
+                    📤 Sent Packages ({{ total_sent }})
+                </button>
+                <button class="tab-btn" onclick="showTab('received')">
+                    📥 Received Packages ({{ total_received }})
+                </button>
+            </div>
+
+            <!-- Sent Packages Tab -->
+            <div id="sent-tab" class="tab-content active">
+                {% if sent_packages %}
+                <div class="package-list">
+                    {% for package in sent_packages %}
+                    <div class="package-item" data-status="{{ package.status }}">
+                        <div class="package-header" onclick="toggleDetails(this)">
+                            <div style="flex-grow: 1;">
+                                <div style="display: flex; align-items: center;">
+                                    <h4 style="margin-bottom: 0.25rem;">
+                                        {{ package.tracking_number }}
+                                    </h4>
+                                    <span class="expand-icon">▼</span>
+                                </div>
+                                <p style="color: var(--gray-400); font-size: 0.875rem;">
+                                    To: {{ package.receiver.name }}
+                                </p>
+                            </div>
+                            <span class="status-badge status-{{ package.status }}">
+                                {{ package.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="package-details">
+                            <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                {{ package.description|truncatewords:10 }}
+                            </p>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                <span style="color: var(--gray-500); font-size: 0.875rem;">
+                                    {{ package.created_at|date:"M d, Y" }}
+                                </span>
+                                <span style="color: var(--accent); font-weight: 600;">
+                                    ${{ package.price }}
+                                </span>
+                            </div>
+
+                            <!-- Tracking History Section -->
+                            <div style="margin-top: 1.5rem;">
+                                <h5
+                                    style="color: var(--primary-light); margin-bottom: 1rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    🕒 Tracking History
+                                </h5>
+                                <div class="tracking-history"
+                                    style="border-left: 2px solid rgba(99, 102, 241, 0.2); margin-left: 0.5rem; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                                    {% for event in package.tracking_events.all %}
+                                    <div style="position: relative;">
+                                        <div
+                                            style="position: absolute; left: -1.9rem; top: 0.25rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--white);">
+                                        </div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                            <div>
+                                                <p style="font-weight: 600; color: var(--white); font-size: 0.875rem;">
+                                                    {{ event.get_status_display }}</p>
+                                                <p style="color: var(--gray-400); font-size: 0.75rem;">{{ event.location }}</p>
+                                                {% if event.notes %}
+                                                <p
+                                                    style="color: var(--gray-500); font-size: 0.75rem; font-style: italic; margin-top: 0.25rem;">
+                                                    "{{ event.notes }}"</p>
+                                                {% endif %}
+                                            </div>
+                                            <span style="color: var(--gray-500); font-size: 0.75rem;">{{ event.timestamp|date:"M d, g:i a" }}</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Status Update Button for Senders -->
+                            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                                <a href="{% url 'update_package_status' package.tracking_number %}"
+                                    class="btn btn-secondary"
+                                    style="flex: 1; padding: 0.5rem; font-size: 0.875rem; background: rgba(99, 102, 241, 0.1); border: 1px solid var(--primary-light); color: var(--primary-light);">
+                                    🔄 Update Status
+                                </a>
+                                <a href="{% url 'track_package_detail' package.tracking_number %}"
+                                    class="btn btn-primary" style="flex: 1; padding: 0.5rem; font-size: 0.875rem;">
+                                    🔍 Full Tracking
+                                </a>
+                            </div>
+
+                            <!-- Verification Code for Senders -->
+                            <div
+                                style="margin-top: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--radius-md); border: 1px dashed var(--primary-light);">
+                                <p style="color: var(--gray-400); font-size: 0.75rem; margin-bottom: 0.25rem;">
+                                    VERIFICATION CODE (Share with receiver)</p>
+                                <p
+                                    style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: var(--primary-light); letter-spacing: 2px;">
+                                    {{ package.verification_code }}</p>
+                            </div>
+                            {% if package.is_claimed %}
+                            <p style="color: var(--success); font-size: 0.75rem; margin-top: 0.5rem; font-weight: 600;">
+                                ✅ Claimed on {{ package.claimed_at|date:"M d, g:i a" }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 3rem; color: var(--gray-500);">
+                    <p style="font-size: 3rem; margin-bottom: 1rem;">📦</p>
+                    <p>You haven't sent any packages yet.</p>
+                    <a href="{% url 'create_package' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                        Create Your First Package
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Received Packages Tab -->
+            <div id="received-tab" class="tab-content">
+                {% if received_packages %}
+                <div class="package-list">
+                    {% for package in received_packages %}
+                    <div class="package-item" data-status="{{ package.status }}">
+                        <div class="package-header" onclick="toggleDetails(this)">
+                            <div style="flex-grow: 1;">
+                                <div style="display: flex; align-items: center;">
+                                    <h4 style="margin-bottom: 0.25rem;">
+                                        {{ package.tracking_number }}
+                                    </h4>
+                                    <span class="expand-icon">▼</span>
+                                </div>
+                                <p style="color: var(--gray-400); font-size: 0.875rem;">
+                                    From: {{ package.sender.name }}
+                                </p>
+                            </div>
+                            <span class="status-badge status-{{ package.status }}">
+                                {{ package.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="package-details">
+                            <p style="color: var(--gray-400); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                {{ package.description|truncatewords:10 }}
+                            </p>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                <span style="color: var(--gray-500); font-size: 0.875rem;">
+                                    {{ package.created_at|date:"M d, Y" }}
+                                </span>
+                                {% if package.estimated_delivery %}
+                                <span style="color: var(--accent); font-size: 0.875rem;">
+                                    Est: {{ package.estimated_delivery|date:"M d" }}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Tracking History Section for Receivers -->
+                            <div style="margin-top: 1.5rem;">
+                                <h5
+                                    style="color: var(--primary-light); margin-bottom: 1rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    🕒 Tracking History
+                                </h5>
+                                <div class="tracking-history"
+                                    style="border-left: 2px solid rgba(99, 102, 241, 0.2); margin-left: 0.5rem; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                                    {% for event in package.tracking_events.all %}
+                                    <div style="position: relative;">
+                                        <div
+                                            style="position: absolute; left: -1.9rem; top: 0.25rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--white);">
+                                        </div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                            <div>
+                                                <p style="font-weight: 600; color: var(--white); font-size: 0.875rem;">
+                                                    {{ event.get_status_display }}</p>
+                                                <p style="color: var(--gray-400); font-size: 0.75rem;">{{ event.location }}</p>
+                                                {% if event.notes %}
+                                                <p
+                                                    style="color: var(--gray-500); font-size: 0.75rem; font-style: italic; margin-top: 0.25rem;">
+                                                    "{{ event.notes }}"</p>
+                                                {% endif %}
+                                            </div>
+                                            <span style="color: var(--gray-500); font-size: 0.75rem;">{{ event.timestamp|date:"M d, g:i a" }}</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 1.5rem;">
+                                <a href="{% url 'track_package_detail' package.tracking_number %}"
+                                    class="btn btn-primary" style="width: 100%; padding: 0.5rem; font-size: 0.875rem;">
+                                    🔍 View Tracking Page
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 3rem; color: var(--gray-500);">
+                    <p style="font-size: 3rem; margin-bottom: 1rem;">📥</p>
+                    <p>No packages received yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        const targetTab = document.getElementById(tabName + '-tab');
+        if (targetTab) targetTab.classList.add('active');
+
+        // Update button state
+        const targetBtn = document.querySelector(`.tab-btn[onclick*="${tabName}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    function filterPackages(status, tabName) {
+        // Switch tab first
+        showTab(tabName);
+
+        // Update active stat card
+        document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active'));
+        if (status === 'all') {
+            document.getElementById(tabName + '-stat')?.classList.add('active');
+        } else if (status === 'pending') {
+            document.getElementById('pending-stat')?.classList.add('active');
+        }
+
+        // Filter items in that tab
+        const tab = document.getElementById(tabName + '-tab');
+        const items = tab.querySelectorAll('.package-item');
+
+        items.forEach(item => {
+            const itemStatus = item.getAttribute('data-status');
+            if (status === 'all') {
+                item.classList.remove('hidden');
+                item.style.opacity = '1';
+            } else if (status === 'pending') {
+                // For 'pending', we show everything NOT 'delivered'
+                if (itemStatus !== 'delivered') {
+                    item.classList.remove('hidden');
+                    item.style.opacity = '1';
+                } else {
+                    item.classList.add('hidden');
+                }
+            }
+        });
+    }
+
+    function toggleDetails(header) {
+        const item = header.closest('.package-item');
+        item.classList.toggle('expanded');
+    }
+</script>
+{% endblock %}

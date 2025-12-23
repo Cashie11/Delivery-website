@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request Pickup - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-3">Request Package Pickup</h1>
+        <p class="text-center"
+            style="color: var(--gray-400); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Fill out the form below to schedule a pickup. We'll collect your package and provide you with a tracking
+            number.
+        </p>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <form method="post" class="glass-card">
+                {% csrf_token %}
+
+                <!-- Sender Information -->
+                <h3 style="color: var(--primary-light); margin-bottom: 1.5rem;">📤 Sender Information</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="id_sender_name">Full Name *</label>
+                        {{ form.sender_name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_sender_email">Email *</label>
+                        {{ form.sender_email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_sender_phone">Phone Number *</label>
+                        {{ form.sender_phone }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_sender_address">Pickup Address *</label>
+                        {{ form.sender_address }}
+                    </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <!-- Receiver Information -->
+                <h3 style="color: var(--accent); margin-bottom: 1.5rem;">📥 Receiver Information</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="id_receiver_name">Full Name *</label>
+                        {{ form.receiver_name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_email">Email *</label>
+                        {{ form.receiver_email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_phone">Phone Number *</label>
+                        {{ form.receiver_phone }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_address">Delivery Address *</label>
+                        {{ form.receiver_address }}
+                    </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <!-- Package Information -->
+                <h3 style="color: var(--success); margin-bottom: 1.5rem;">📦 Package Information</h3>
+                <div class="form-group">
+                    <label for="id_description">Package Description *</label>
+                    {{ form.description }}
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="id_weight">Weight (kg) *</label>
+                        {{ form.weight }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_preferred_pickup_date">Preferred Pickup Date</label>
+                        {{ form.preferred_pickup_date }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Submit Pickup Request 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - SwiftTrack Delivery{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="container">
+            <h1>Lightning-Fast Delivery Tracking</h1>
+            <p>Track your packages in real-time with SwiftTrack's advanced tracking system</p>
+
+            {% if user.is_authenticated %}
+            <!-- For Authenticated Users: Show both options -->
+            <div style="max-width: 700px; margin: 0 auto;">
+                <div class="grid grid-2" style="gap: 1rem; margin-top: 2rem;">
+                    <a href="{% url 'create_package' %}" class="btn btn-primary"
+                        style="padding: 1.5rem; text-align: center; font-size: 1.125rem;">
+                        📦 Send a Package
+                    </a>
+                    <a href="{% url 'track_package' %}" class="btn btn-secondary"
+                        style="padding: 1.5rem; text-align: center; font-size: 1.125rem;">
+                        🔍 Track Package
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <!-- For Non-Authenticated Users: Show tracking search -->
+            <div class="tracking-search">
+                <form method="post" action="{% url 'track_package' %}">
+                    {% csrf_token %}
+                    {{ form.tracking_number }}
+                    <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">
+                        Track Package 🔍
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 1.5rem; color: var(--gray-400);">
+                    Want to send a package?
+                    <a href="{% url 'register' %}"
+                        style="color: var(--accent); text-decoration: none; font-weight: 600;">
+                        Create an account
+                    </a>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-4">
+    <div class="container">
+        <div class="grid grid-3">
+            <div class="card text-center">
+                <h2 style="color: var(--accent); margin-bottom: 0.5rem;">{{ total_packages|default:"1000+" }}</h2>
+                <p style="color: var(--gray-400);">Packages Delivered</p>
+            </div>
+            <div class="card text-center">
+                <h2 style="color: var(--primary-light); margin-bottom: 0.5rem;">24/7</h2>
+                <p style="color: var(--gray-400);">Customer Support</p>
+            </div>
+            <div class="card text-center">
+                <h2 style="color: var(--success); margin-bottom: 0.5rem;">99.9%</h2>
+                <p style="color: var(--gray-400);">On-Time Delivery</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-4">
+    <div class="container">
+        <h2 class="text-center mb-3">Our Services</h2>
+        <div class="grid grid-3">
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+                <h3>Standard Delivery</h3>
+                <p style="color: var(--gray-400);">Reliable delivery within 3-5 business days at affordable rates.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+                <h3>Express Shipping</h3>
+                <p style="color: var(--gray-400);">Get your packages delivered within 1-2 business days.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                <h3>Same-Day Delivery</h3>
+                <p style="color: var(--gray-400);">Ultra-fast delivery for urgent packages in select areas.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-4">
+    <div class="container">
+        <h2 class="text-center mb-3">Why Choose SwiftTrack?</h2>
+        <div class="grid grid-2">
+            <div class="glass-card">
+                <h3>🔒 Secure Tracking</h3>
+                <p style="color: var(--gray-400);">Advanced encryption and secure tracking numbers ensure your package
+                    information stays private.</p>
+            </div>
+            <div class="glass-card">
+                <h3>📍 Real-Time Updates</h3>
+                <p style="color: var(--gray-400);">Get instant notifications and live tracking updates throughout your
+                    package's journey.</p>
+            </div>
+            <div class="glass-card">
+                <h3>💰 Competitive Pricing</h3>
+                <p style="color: var(--gray-400);">Transparent pricing with no hidden fees. Get the best value for your
+                    delivery needs.</p>
+            </div>
+            <div class="glass-card">
+                <h3>🌍 Wide Coverage</h3>
+                <p style="color: var(--gray-400);">Delivering to thousands of locations nationwide with expanding
+                    international service.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-4">
+    <div class="container text-center">
+        <div class="glass-card">
+            {% if user.is_authenticated %}
+            <h2>Ready to Send Another Package?</h2>
+            <p style="color: var(--gray-400); margin-bottom: 2rem;">Create a new shipment with automatic pricing</p>
+            <a href="{% url 'create_package' %}" class="btn btn-primary">Send Package Now 📦</a>
+            {% else %}
+            <h2>Ready to Ship?</h2>
+            <p style="color: var(--gray-400); margin-bottom: 2rem;">Create an account to send packages with automatic
+                pricing</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
+                <a href="{% url 'request_pickup' %}" class="btn btn-secondary">Request Pickup</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

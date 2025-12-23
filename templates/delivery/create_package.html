@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Package - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-2">Create New Package</h1>
+        <p class="text-center" style="color: var(--gray-400); margin-bottom: 3rem;">
+            Send a package with automatic pricing and tracking
+        </p>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <form method="post" enctype="multipart/form-data" class="glass-card" id="package-form">
+                {% csrf_token %}
+
+                <!-- Receiver Information -->
+                <h3 style="color: var(--accent); margin-bottom: 1.5rem;">📥 Receiver Information</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="id_receiver_name">Full Name *</label>
+                        {{ form.receiver_name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_email">Email *</label>
+                        {{ form.receiver_email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_phone">Phone Number *</label>
+                        {{ form.receiver_phone }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_receiver_address">Delivery Address *</label>
+                        {{ form.receiver_address }}
+                    </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <!-- Package Information -->
+                <h3 style="color: var(--success); margin-bottom: 1.5rem;">📦 Package Details</h3>
+                <div class="form-group">
+                    <label for="id_description">Package Description *</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    <label for="weight-input">Weight (kg) *</label>
+                    {{ form.weight }}
+                </div>
+                <div class="form-group">
+                    <label for="id_package_image">Package Image (Optional)</label>
+                    {{ form.package_image }}
+                    <small style="color: var(--gray-500); display: block; mt-1;">
+                        Upload a photo of the package for recipient verification.
+                    </small>
+                    <div id="image-preview" style="margin-top: 1rem; display: none;">
+                        <img id="preview-img" src="#" alt="Preview"
+                            style="max-width: 100%; border-radius: var(--radius-md);">
+                    </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <!-- Service Tier Selection -->
+                <h3 style="color: var(--primary-light); margin-bottom: 1.5rem;">🚀 Select Service Tier</h3>
+                <div class="service-tier-selector">
+                    {% for value, label in form.service_tier.field.choices %}
+                    <div class="tier-option">
+                        {% if forloop.first %}
+                        <input type="radio" name="service_tier" value="{{ value }}" id="tier_{{ value }}" checked>
+                        {% else %}
+                        <input type="radio" name="service_tier" value="{{ value }}" id="tier_{{ value }}">
+                        {% endif %}
+                        <label for="tier_{{ value }}" class="tier-label">
+                            <div class="tier-name">
+                                {% if value == 'standard' %}📦 Standard
+                                {% elif value == 'express' %}⚡ Express
+                                {% else %}🚀 Same-Day{% endif %}
+                            </div>
+                            <div class="tier-price" id="price-{{ value }}">$9.99</div>
+                            <div class="tier-time">{{ label }}</div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Price Display -->
+                <div class="price-display">
+                    <p style="color: var(--gray-400); margin-bottom: 0.5rem;">Estimated Total</p>
+                    <h3 id="total-price">$9.99</h3>
+                    <p style="color: var(--gray-500); font-size: 0.875rem; margin-top: 0.5rem;">
+                        Base price + weight charge
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Create Package & Pay 💳
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const weightInput = document.getElementById('weight-input');
+        const serviceTierRadios = document.querySelectorAll('input[name="service_tier"]');
+        const imageInput = document.querySelector('input[type="file"]');
+        const previewDiv = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const totalPriceDisplay = document.getElementById('total-price');
+
+        const tiers = {
+            'standard': { base: 9.99, rate: 2.00 },
+            'express': { base: 19.99, rate: 3.00 },
+            'same_day': { base: 39.99, rate: 4.00 }
+        };
+
+        // Image Preview Logic
+        if (imageInput) {
+            imageInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        previewDiv.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewDiv.style.display = 'none';
+                }
+            });
+        }
+
+        function updatePrices() {
+            const weight = parseFloat(weightInput.value) || 0;
+            const selectedTierRadio = document.querySelector('input[name="service_tier"]:checked');
+            if (!selectedTierRadio) return;
+
+            const selectedTierValue = selectedTierRadio.value;
+
+            for (const [tier, values] of Object.entries(tiers)) {
+                const price = values.base + (weight * values.rate);
+                const display = document.getElementById('price-' + tier);
+                if (display) {
+                    display.innerText = '$' + price.toFixed(2);
+                }
+            }
+
+            // Update total price based on currently selected tier
+            const selectedTierData = tiers[selectedTierValue];
+            if (selectedTierData) {
+                const total = selectedTierData.base + (weight * selectedTierData.rate);
+                totalPriceDisplay.textContent = '$' + total.toFixed(2);
+            }
+        }
+
+        // Event Listeners
+        weightInput.addEventListener('input', updatePrices);
+        serviceTierRadios.forEach(radio => {
+            radio.addEventListener('change', updatePrices);
+        });
+
+        // Initial calculation
+        updatePrices();
+    });
+</script>
+{% endblock %}

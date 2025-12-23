@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h1 class="mb-3">My Profile</h1>
+
+            <div class="glass-card">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" value="{{ user.username }}" class="form-control" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_email">Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_phone">Phone Number</label>
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_address">Address</label>
+                        {{ form.address }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Update Profile 💾
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

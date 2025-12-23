@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-2">Contact Us</h1>
+        <p class="text-center" style="color: var(--gray-400); margin-bottom: 3rem;">
+            Have questions? We're here to help 24/7
+        </p>
+
+        <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto;">
+            <!-- Contact Form -->
+            <div class="glass-card">
+                <h3 style="margin-bottom: 1.5rem;">Send us a Message</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_name">Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_subject">Subject *</label>
+                        {{ form.subject }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_message">Message *</label>
+                        {{ form.message }}
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Send Message 📧
+                    </button>
+                </form>
+            </div>
+
+            <!-- Contact Information -->
+            <div>
+                <div class="glass-card mb-2">
+                    <h3 style="margin-bottom: 1.5rem;">Get in Touch</h3>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: var(--primary-light); margin-bottom: 0.5rem;">📧 Email</h4>
+                        <p style="color: var(--gray-400);">support@swifttrack.com</p>
+                        <p style="color: var(--gray-400); font-size: 0.875rem;">We respond within 24 hours</p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">📞 Phone</h4>
+                        <p style="color: var(--gray-400);">+1 (555) 123-4567</p>
+                        <p style="color: var(--gray-400); font-size: 0.875rem;">Available 24/7</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--success); margin-bottom: 0.5rem;">📍 Address</h4>
+                        <p style="color: var(--gray-400);">123 Delivery Street</p>
+                        <p style="color: var(--gray-400);">San Francisco, CA 94102</p>
+                        <p style="color: var(--gray-400);">United States</p>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="margin-bottom: 1rem;">Business Hours</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 0.5rem;">Customer Support: 24/7</p>
+                    <p style="color: var(--gray-400); margin-bottom: 0.5rem;">Office Hours: Mon-Fri, 9AM-6PM PST</p>
+                    <p style="color: var(--gray-400);">Pickup Services: 7 days a week</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Claim Package - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="text-center mb-2">Claim Your Package</h1>
+        <p class="text-center" style="color: var(--gray-400); margin-bottom: 3rem;">
+            Enter your tracking details and verification code to confirm receipt
+        </p>
+
+        <div style="max-width: 600px; margin: 0 auto;">
+            <!-- Verification Form -->
+            <form method="post" class="glass-card mb-3">
+                {% csrf_token %}
+                <h3 style="color: var(--primary-light); margin-bottom: 1.5rem;">🔐 Security Verification</h3>
+
+                <div class="form-group">
+                    <label for="id_tracking_number">Tracking Number *</label>
+                    {{ form.tracking_number }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_verification_code">Verification Code *</label>
+                    {{ form.verification_code }}
+                    <small style="color: var(--gray-500); display: block; mt-1;">
+                        Contact the sender if you don't have the 6-digit verification code.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Verify Package Details 🔍
+                </button>
+            </form>
+
+            {% if package %}
+            <!-- Package Details (Shown only after verification) -->
+            <div class="glass-card fadeInUp">
+                <h3 style="color: var(--success); margin-bottom: 1.5rem;">📦 Package Verified!</h3>
+
+                <div class="grid grid-2 mb-2">
+                    <div>
+                        <p style="color: var(--gray-500); font-size: 0.875rem;">Status</p>
+                        <span class="badge" style="background: {{ package.get_status_color }};">
+                            {{ package.get_status_display }}
+                        </span>
+                    </div>
+                    <div>
+                        <p style="color: var(--gray-500); font-size: 0.875rem;">Tracking Number</p>
+                        <p style="font-weight: 600;">{{ package.tracking_number }}</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <p style="color: var(--gray-500); font-size: 0.875rem;">Description</p>
+                    <p>{{ package.description }}</p>
+                </div>
+
+                {% if package.package_image %}
+                <div class="form-group">
+                    <p style="color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">Package Photo</p>
+                    <div
+                        style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.2);">
+                        <img src="{{ package.package_image.url }}" alt="Package Photo"
+                            style="width: 100%; height: auto; display: block;">
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <div class="text-center">
+                    <p class="mb-2" style="color: var(--gray-400);">
+                        Does this match your package? If so, click below to mark it as received.
+                    </p>
+                    <a href="{% url 'confirm_claim' package.tracking_number %}" class="btn btn-success"
+                        style="width: 100%; font-size: 1.1rem; padding: 1rem;">
+                        YES, I'VE RECEIVED IT ✅
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
