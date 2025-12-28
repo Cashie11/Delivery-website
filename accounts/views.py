@@ -88,6 +88,10 @@ def dashboard(request):
 @login_required
 def profile(request):
     """User profile view and edit"""
+    # Ensure profile exists before accessing it
+    from .models import UserProfile
+    UserProfile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=request.user.profile, user=request.user)
         if form.is_valid():

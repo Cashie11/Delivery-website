@@ -246,8 +246,12 @@ def contact(request):
     return render(request, 'contact.html', context)
 @login_required
 def update_package_status(request, tracking_number):
-    """View for senders to update package status and location"""
-    package = get_object_or_404(Package, tracking_number=tracking_number, sender_user=request.user)
+    """View for admins to update package status and location"""
+    if not request.user.is_superuser:
+        messages.error(request, "You do not have permission to update package status.")
+        return redirect('dashboard')
+        
+    package = get_object_or_404(Package, tracking_number=tracking_number)
     
     if package.status == 'delivered':
         messages.warning(request, "This package has already been delivered.")

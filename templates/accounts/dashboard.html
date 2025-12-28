@@ -175,7 +175,8 @@
                                 </div>
                             </div>
 
-                            <!-- Status Update Button for Senders -->
+                            <!-- Status Update Button for Admins -->
+                            {% if user.is_superuser %}
                             <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
                                 <a href="{% url 'update_package_status' package.tracking_number %}"
                                     class="btn btn-secondary"
@@ -187,6 +188,14 @@
                                     🔍 Full Tracking
                                 </a>
                             </div>
+                            {% else %}
+                            <div style="margin-top: 1.5rem;">
+                                <a href="{% url 'track_package_detail' package.tracking_number %}"
+                                    class="btn btn-primary" style="width: 100%; padding: 0.5rem; font-size: 0.875rem;">
+                                    🔍 Full Tracking
+                                </a>
+                            </div>
+                            {% endif %}
 
                             <!-- Verification Code for Senders -->
                             <div
