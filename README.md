@@ -52,11 +52,6 @@ SwiftTrack is a premium, full-featured delivery tracking application built with 
    - Website: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
    - Admin Detail: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
-## 🔐 Default Admin Credentials
-
-- **Username:** `admin`
-- **Password:** `admin123`
-
 ## 📱 Demos & Verification
 
 ### Interactive Dashboard
