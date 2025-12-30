@@ -162,7 +162,7 @@ def create_package(request):
                 request,
                 f'Package created successfully! Tracking number: {package.tracking_number}. Total: ${package.price}'
             )
-            return redirect('dashboard')
+            return redirect('package_success', tracking_number=package.tracking_number)
     else:
         form = CreatePackageForm()
     
@@ -290,3 +290,14 @@ def update_package_status(request, tracking_number):
         'package': package,
     }
     return render(request, 'delivery/update_status.html', context)
+
+
+@login_required
+def package_success(request, tracking_number):
+    """Success page after package creation"""
+    package = get_object_or_404(Package, tracking_number=tracking_number, sender_user=request.user)
+    
+    context = {
+        'package': package,
+    }
+    return render(request, 'delivery/package_success.html', context)

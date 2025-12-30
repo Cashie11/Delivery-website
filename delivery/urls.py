@@ -7,6 +7,7 @@ urlpatterns = [
     path('track/<str:tracking_number>/', views.track_package, name='track_package_detail'),
     path('request-pickup/', views.request_pickup, name='request_pickup'),
     path('create-package/', views.create_package, name='create_package'),
+    path('package-success/<str:tracking_number>/', views.package_success, name='package_success'),
     path('claim-package/', views.claim_package, name='claim_package'),
     path('confirm-claim/<str:tracking_number>/', views.confirm_claim, name='confirm_claim'),
     path('update-status/<str:tracking_number>/', views.update_package_status, name='update_package_status'),

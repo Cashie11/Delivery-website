@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Package Created Successfully - SwiftTrack{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+            <!-- Success Animation -->
+            <div class="success-icon">
+                <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="var(--success)" stroke-width="4" fill="none" opacity="0.2" />
+                    <circle cx="50" cy="50" r="45" stroke="var(--success)" stroke-width="4" fill="none"
+                        stroke-dasharray="283" stroke-dashoffset="283" class="check-circle">
+                        <animate attributeName="stroke-dashoffset" from="283" to="0" dur="0.6s" fill="freeze" />
+                    </circle>
+                    <path d="M30 50 L45 65 L70 35" stroke="var(--success)" stroke-width="5" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-dasharray="60" stroke-dashoffset="60" class="check-mark">
+                        <animate attributeName="stroke-dashoffset" from="60" to="0" dur="0.4s" begin="0.3s"
+                            fill="freeze" />
+                    </path>
+                </svg>
+            </div>
+
+            <h1 class="mt-4 mb-2" style="color: var(--success);">🎉 Package Created Successfully!</h1>
+            <p style="color: var(--gray-400); margin-bottom: 3rem;">
+                Your package has been created and is ready for dispatch
+            </p>
+
+            <!-- Tracking Information Card -->
+            <div class="glass-card" style="text-align: left;">
+                <h3 style="color: var(--primary); margin-bottom: 1.5rem;">📦 Tracking Information</h3>
+
+                <!-- Tracking Number -->
+                <div class="info-box">
+                    <label style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                        Tracking Number
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <code id="tracking-number" style="flex: 1; font-size: 1.5rem; font-weight: 700; 
+                                     color: var(--primary); background: rgba(99, 102, 241, 0.1); 
+                                     padding: 0.75rem; border-radius: var(--radius-md); 
+                                     font-family: 'Courier New', monospace;">
+                            {{ package.tracking_number }}
+                        </code>
+                        <button onclick="copyToClipboard('tracking-number', 'copy-btn-tracking')" id="copy-btn-tracking"
+                            class="btn-copy" title="Copy tracking number">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Verification Code -->
+                <div class="info-box" style="margin-top: 1.5rem;">
+                    <label style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                        Verification Code (for receiver)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <code id="verification-code" style="flex: 1; font-size: 1.25rem; font-weight: 600; 
+                                     color: var(--accent); background: rgba(244, 63, 94, 0.1); 
+                                     padding: 0.75rem; border-radius: var(--radius-md); 
+                                     font-family: 'Courier New', monospace;">
+                            {{ package.verification_code }}
+                        </code>
+                        <button onclick="copyToClipboard('verification-code', 'copy-btn-code')" id="copy-btn-code"
+                            class="btn-copy" title="Copy verification code">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                    <small style="color: var(--gray-500); display: block; margin-top: 0.5rem;">
+                        🔒 Share this code with the receiver for package verification
+                    </small>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid rgba(99, 102, 241, 0.2); margin: 2rem 0;">
+
+                <!-- Package Details -->
+                <div class="grid grid-2" style="gap: 1rem;">
+                    <div>
+                        <label
+                            style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            Service Tier
+                        </label>
+                        <p style="margin: 0; color: var(--text-primary); font-weight: 600;">
+                            {{ package.get_service_tier_display }}
+                        </p>
+                    </div>
+                    <div>
+                        <label
+                            style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            Total Cost
+                        </label>
+                        <p style="margin: 0; color: var(--success); font-weight: 700; font-size: 1.25rem;">
+                            ${{ package.price }}
+                        </p>
+                    </div>
+                    <div>
+                        <label
+                            style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            Estimated Delivery
+                        </label>
+                        <p style="margin: 0; color: var(--text-primary); font-weight: 600;">
+                            {{ package.estimated_delivery|date:"M d, Y" }}
+                        </p>
+                    </div>
+                    <div>
+                        <label
+                            style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            Weight
+                        </label>
+                        <p style="margin: 0; color: var(--text-primary); font-weight: 600;">
+                            {{ package.weight }} kg
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <label style="display: block; color: var(--gray-500); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                        Receiver
+                    </label>
+                    <p style="margin: 0; color: var(--text-primary);">
+                        {{ package.receiver.name }}<br>
+                        <small style="color: var(--gray-500);">{{ package.receiver.address }}</small>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-2" style="gap: 1rem; margin-top: 2rem;">
+                <a href="{% url 'track_package_detail' package.tracking_number %}" class="btn btn-primary">
+                    📍 Track Package
+                </a>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                    🏠 Go to Dashboard
+                </a>
+            </div>
+
+            <!-- Additional Info -->
+            <div style="margin-top: 2rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); 
+                        border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+                <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">
+                    💡 <strong>Next Steps:</strong> We've sent tracking information to both sender and receiver emails.
+                    Don't forget to share the verification code with the receiver!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .success-icon {
+        display: inline-block;
+        margin: 2rem 0;
+    }
+
+    .btn-copy {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .btn-copy:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-copy:active {
+        transform: translateY(0);
+    }
+
+    .btn-copy.copied {
+        background: var(--success);
+    }
+
+    .btn-copy.copied .copy-text::before {
+        content: "✓ ";
+    }
+
+    .info-box {
+        animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToClipboard(elementId, buttonId) {
+        const element = document.getElementById(elementId);
+        const button = document.getElementById(buttonId);
+        const text = element.textContent.trim();
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(text).then(() => {
+            // Visual feedback
+            button.classList.add('copied');
+            const copyText = button.querySelector('.copy-text');
+            const originalText = copyText.textContent;
+            copyText.textContent = 'Copied!';
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+                button.classList.remove('copied');
+                copyText.textContent = originalText;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy to clipboard');
+        });
+    }
+</script>
+{% endblock %}
