@@ -29,13 +29,13 @@ COPY . .
 RUN chmod +x /app/entrypoint.sh
 
 # Create directories for static and media files
-RUN mkdir -p /app/staticfiles /app/media
+RUN mkdir -p /app/staticfiles /app/media /app/db
 
-# Expose port 8000
-EXPOSE 8000
+# Expose port 80
+EXPOSE 80
 
 # Set entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["/bin/sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn swifttrack.wsgi:application --bind 0.0.0.0:80 --workers 3"]
