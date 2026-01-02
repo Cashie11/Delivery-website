@@ -137,6 +137,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # For collectstatic
 # Whitenoise settings for optimized static file serving
 WHITENOISE_USE_FINDERS = True
 STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
