@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import api_views
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -13,4 +14,8 @@ urlpatterns = [
     path('update-status/<str:tracking_number>/', views.update_package_status, name='update_package_status'),
     path('services/', views.services, name='services'),
     path('contact/', views.contact, name='contact'),
+    
+    # API endpoints
+    path('api/packages/create/', api_views.create_package_api, name='api_create_package'),
+    path('api/packages/track/<str:tracking_number>', api_views.track_package_api, name='api_track_package'),
 ]
