@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    container_name: zimozi_logistics_web
+    container_name: swifttrack_web
     restart: always
     volumes:
       - .:/app
